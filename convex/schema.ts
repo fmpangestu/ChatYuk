@@ -32,12 +32,12 @@ export default defineSchema({
   conversationMembers: defineTable({
     memberId: v.id("users"),
     conversationId: v.id("conversations"),
-    lastMessage: v.optional(v.id("messages")),
+    lastSeenMessage: v.optional(v.id("messages")),
   })
     .index("by_memberId", ["memberId"])
     .index("by_conversationId", ["conversationId"])
     .index("by_memberId_conversationId", ["memberId", "conversationId"]),
-  message: defineTable({
+  messages: defineTable({
     senderId: v.id("users"),
     conversationId: v.id("conversations"),
     type: v.string(),
