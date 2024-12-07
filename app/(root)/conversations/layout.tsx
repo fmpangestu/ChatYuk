@@ -5,7 +5,7 @@ import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
 import React from "react";
-import DMConversationItem from "./components/DMConversationItem";
+import DMConversationItem from "./_components/DMConversationItem";
 
 type Props = React.PropsWithChildren<{}>;
 
@@ -27,6 +27,8 @@ const ConversationLayout = ({ children }: Props) => {
                   id={conversations.conversation._id}
                   username={conversations.otherMember?.username || ""}
                   imageUrl={conversations.otherMember?.imageUrl || ""}
+                  lastMessageContent={conversations.lastMessage?.content}
+                  lastMessageSender={conversations.lastMessage?.sender}
                 />
               );
             })
