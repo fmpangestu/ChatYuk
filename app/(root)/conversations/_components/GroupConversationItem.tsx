@@ -1,15 +1,14 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Id } from "@/convex/_generated/dataModel";
-import { User } from "lucide-react";
+// import { User } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
 type Props = {
   id: Id<"conversations">;
-  imageUrl: string;
-  username: string;
+  name: string;
   lastMessageSender?: string;
   lastMessageContent?: string;
   className?: string;
@@ -17,10 +16,9 @@ type Props = {
   unseenCount?: number;
 };
 
-const DMConversationItem = ({
+const GroupConversationItem = ({
   id,
-  imageUrl,
-  username,
+  name,
   lastMessageContent,
   lastMessageSender,
   className,
@@ -31,17 +29,17 @@ const DMConversationItem = ({
     <Link href={`/conversations/${id}`} className="w-full">
       <Card
         onClick={onClick}
-        className={`${className} p-2 flex flex-row items-center justify-between truncate`}
+        className={`${className} p-2 flex flex-row items-center gap-4 truncate`}
       >
         <div className="flex flex-row items-center gap-4 truncate">
           <Avatar>
-            <AvatarImage src={imageUrl} />
+            {/* <AvatarImage src={imageUrl} /> */}
             <AvatarFallback>
-              <User />
+              {name.charAt(0).toLocaleUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col truncate">
-            <h4 className="truncate">{username}</h4>
+            <h4 className="truncate">{name}</h4>
             {lastMessageSender && lastMessageContent ? (
               <span className="text-sm text-muted-foreground flex truncate overflow-ellipsis">
                 <p className="font-semibold">{lastMessageSender}:</p>
@@ -66,4 +64,4 @@ const DMConversationItem = ({
   );
 };
 
-export default DMConversationItem;
+export default GroupConversationItem;

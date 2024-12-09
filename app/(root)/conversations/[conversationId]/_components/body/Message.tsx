@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import React from "react";
@@ -10,6 +11,8 @@ type Props = {
   content: string[];
   createdAt: number;
   type: string;
+  isGroup: boolean;
+  seen?: React.ReactNode;
 };
 
 const Message = ({
@@ -20,6 +23,8 @@ const Message = ({
   content,
   createdAt,
   type,
+  isGroup,
+  seen,
 }: Props) => {
   const formatTime = (timestamp: number) => {
     return format(timestamp, "HH:mm");
@@ -46,7 +51,7 @@ const Message = ({
           })}
         >
           {type === "text" ? (
-            <p className="text-wrap break-words whitespace-pre-wrap">
+            <p className="text-wrap break-words whitespace-pre-wrap break-all">
               {content}
             </p>
           ) : null}
@@ -59,7 +64,20 @@ const Message = ({
             {formatTime(createdAt)}
           </p>
         </div>
+        {seen}
       </div>
+      {isGroup ? (
+        <Avatar
+          className={cn("relative h-8 w-8 ", {
+            "order-2": fromCurrentUser,
+            "order-1": !fromCurrentUser,
+            invisible: lastByUser,
+          })}
+        >
+          <AvatarImage src={senderImage} />
+          <AvatarFallback>{senderName.substring(0, 1)}</AvatarFallback>
+        </Avatar>
+      ) : null}
     </div>
   );
 };
