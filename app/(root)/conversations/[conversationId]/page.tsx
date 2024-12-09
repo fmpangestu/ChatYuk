@@ -6,7 +6,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "./_components/Header";
 import Body from "./_components/body/Body";
 import ChatInput from "./_components/input/ChatInput";
@@ -16,22 +16,24 @@ import LeaveGroupDialog from "./_components/dialogs/LeaveGroupDialog";
 
 type Props = {
   params: {
-    conversationId: Id<"conversations">;
+    conversationId: Promise<Id<"conversations">>;
   };
 };
 
 const ConversationPage = ({ params }: Props) => {
-  // Gunakan conversationId langsung dari props
-  const { conversationId } = params;
-
+  const [conversationId, setConversationId] =
+    useState<Id<"conversations"> | null>(null);
   const [removeFriendDialogOpen, setRemoveFriendDialogOpen] = useState(false);
   const [deleteGroupDialogOpen, setDeleteGroupDialogOpen] = useState(false);
   const [leaveGroupDialogOpen, setLeaveGroupDialogOpen] = useState(false);
+  const [callType, setCallType] = useState<"audio" | "video" | null>(null);
 
-  // Mendapatkan data percakapan dari API
-  const conversation = useQuery(api.conversation.get, {
-    id: conversationId,
-  });
+  useEffect(() => {
+    // Resolving the promise for conversationId
+    params.conversationId.then((id) => setConversationId(id));
+  }, [params]);
+
+  const conversation = useQuery(api.conversation.get, { id: conversationId });
 
   // Render the loading state
   if (!conversationId || conversation === undefined) {
