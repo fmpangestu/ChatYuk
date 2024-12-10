@@ -1,6 +1,6 @@
 "use client";
 import LoadingLogo from "@/components/shared/LoadingLogo";
-import { useAuth } from "@clerk/nextjs";
+import { ClerkProvider, useAuth } from "@clerk/clerk-react";
 import { Authenticated, AuthLoading, ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import React from "react";
@@ -15,14 +15,16 @@ if (!CONVEX_URL) {
 const convex = new ConvexReactClient(CONVEX_URL);
 const ConvexClientProvider = ({ children }: Props) => {
   return (
-    // <ClerkProvider>
-    <ConvexProviderWithClerk useAuth={useAuth} client={convex}>
-      <Authenticated>{children}</Authenticated>
-      <AuthLoading>
-        <LoadingLogo />
-      </AuthLoading>
-    </ConvexProviderWithClerk>
-    // </ClerkProvider>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || ""}
+    >
+      <ConvexProviderWithClerk useAuth={useAuth} client={convex}>
+        <Authenticated>{children}</Authenticated>
+        <AuthLoading>
+          <LoadingLogo />
+        </AuthLoading>
+      </ConvexProviderWithClerk>
+    </ClerkProvider>
   );
 };
 
