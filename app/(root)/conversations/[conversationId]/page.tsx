@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
@@ -6,7 +7,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Header from "./_components/Header";
 import Body from "./_components/body/Body";
 import ChatInput from "./_components/input/ChatInput";
@@ -15,9 +16,9 @@ import DeleteGroupDialog from "./_components/dialogs/DeleteGroupDialog";
 import LeaveGroupDialog from "./_components/dialogs/LeaveGroupDialog";
 
 type Props = {
-  params: {
-    conversationId: Promise<Id<"conversations">>;
-  };
+  params: Promise<{
+    conversationId: Id<"conversations">;
+  }>;
 };
 
 const ConversationPage = ({ params }: Props) => {
@@ -26,25 +27,40 @@ const ConversationPage = ({ params }: Props) => {
   const [removeFriendDialogOpen, setRemoveFriendDialogOpen] = useState(false);
   const [deleteGroupDialogOpen, setDeleteGroupDialogOpen] = useState(false);
   const [leaveGroupDialogOpen, setLeaveGroupDialogOpen] = useState(false);
-  const [callType, setCallType] = useState<"audio" | "video" | null>(null);
+  const [callType, setCallType] = useState<"audio" | "Video" | null>(null);
 
   useEffect(() => {
-    // Resolving the promise for conversationId
-    params.conversationId.then((id) => setConversationId(id));
+    params
+      .then((resolvedParams) => {
+        setConversationId(resolvedParams.conversationId);
+      })
+      .catch((error) => {
+        console.error("Failed to load params:", error);
+        setConversationId(null); // Set null explicitly if params fail
+      });
   }, [params]);
 
-  const conversation = useQuery(api.conversation.get, { id: conversationId });
+  const conversation = useQuery(
+    api.conversation.get,
+    conversationId ? { id: conversationId } : "skip" // Only query when id is available
+  );
 
-  // Render the loading state
-  if (!conversationId || conversation === undefined) {
+  if (conversationId === null) {
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <Loader2 className="h-8 w-8" />
       </div>
     );
   }
 
-  // Render the "not found" state
+  if (conversation === undefined) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <Loader2 className="h-8 w-8" />
+      </div>
+    );
+  }
+
   if (conversation === null) {
     return (
       <p className="w-full h-full flex items-center justify-center">
@@ -111,7 +127,9 @@ const ConversationPage = ({ params }: Props) => {
       <Body
         members={
           conversation.isGroup
-            ? conversation.otherMembers || []
+            ? conversation.otherMembers
+              ? conversation.otherMembers
+              : []
             : conversation.otherMember
               ? [conversation.otherMember]
               : []
