@@ -9,19 +9,20 @@ type Props = {
   children: React.ReactNode;
 };
 const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL || "";
+if (!CONVEX_URL) {
+  console.error("Environment variable NEXT_PUBLIC_CONVEX_URL is missing.");
+}
 const convex = new ConvexReactClient(CONVEX_URL);
 const ConvexClientProvider = ({ children }: Props) => {
   return (
-    <React.Suspense fallback={<div>Loading...</div>}>
-      <ClerkProvider>
-        <ConvexProviderWithClerk useAuth={useAuth} client={convex}>
-          <Authenticated>{children}</Authenticated>
-          <AuthLoading>
-            <LoadingLogo />
-          </AuthLoading>
-        </ConvexProviderWithClerk>
-      </ClerkProvider>
-    </React.Suspense>
+    <ClerkProvider>
+      <ConvexProviderWithClerk useAuth={useAuth} client={convex}>
+        <Authenticated>{children}</Authenticated>
+        <AuthLoading>
+          <LoadingLogo />
+        </AuthLoading>
+      </ConvexProviderWithClerk>
+    </ClerkProvider>
   );
 };
 
