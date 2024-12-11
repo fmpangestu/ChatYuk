@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// import NotificationSound from "@/components/shared/conversation/NotificationSound";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -15,6 +17,7 @@ type Props = {
   className?: string;
   onClick?: () => void;
   unseenCount?: number;
+  // messages: any;
 };
 
 const DMConversationItem = ({
@@ -26,6 +29,7 @@ const DMConversationItem = ({
   className,
   onClick,
   unseenCount,
+  // messages,
 }: Props) => {
   return (
     <Link href={`/conversations/${id}`} className="w-full">
@@ -61,6 +65,7 @@ const DMConversationItem = ({
             {unseenCount}
           </Badge>
         ) : null}
+        {/* <NotificationSound messages={messages} /> */}
       </Card>
     </Link>
   );

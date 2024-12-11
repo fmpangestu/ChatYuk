@@ -2,6 +2,7 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getUserByClerkId } from "./_utils";
+// import { sendNotification } from "../server";
 
 export const get = query({
   args: {
@@ -279,5 +280,13 @@ export const markRead = mutation({
     await ctx.db.patch(membership._id, {
       lastSeenMessage: lastMessage ? lastMessage._id : undefined,
     });
+
+    // await ctx.db.insert("notifications", {
+    //   type: "NEW_MESSAGE",
+    //   conversationId: args.conversationId,
+    //   messageId: args.messageId,
+    //   senderId: currentUser._id,
+    //   timestamp: new Date(),
+    // });
   },
 });

@@ -15,6 +15,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import NotificationSound from "@/components/shared/conversation/NotificationSound";
+// import NotificationSound from "@/components/shared/conversation/NotificationSound";
 
 type BodyProps = {
   isGroup: boolean;
@@ -73,7 +75,8 @@ const Body = ({ isGroup, members }: BodyProps) => {
   const getSeenMessage = (messageId: Id<"messages">) => {
     const seenUsers = members
       .filter((member) => member.lastSeenMessageId === messageId)
-      .map((user) => user.username!.split("")[0]);
+      .map((user) => user.username)
+      .filter((username): username is string => username !== undefined);
 
     if (seenUsers.length === 0) return undefined;
 
@@ -94,18 +97,21 @@ const Body = ({ isGroup, members }: BodyProps) => {
             ? getSeenMessage(message._id)
             : undefined;
           return (
-            <Message
-              key={message._id}
-              fromCurrentUser={isCurrentUser}
-              senderImage={senderImage}
-              senderName={senderName}
-              lastByUser={lastByUser}
-              content={message.content}
-              createdAt={message._creationTime}
-              type={message.type}
-              isGroup={isGroup}
-              seen={seenMessage}
-            />
+            <>
+              <NotificationSound messages={messages || null} />
+              <Message
+                key={message._id}
+                fromCurrentUser={isCurrentUser}
+                senderImage={senderImage}
+                senderName={senderName}
+                lastByUser={lastByUser}
+                content={message.content}
+                createdAt={message._creationTime}
+                type={message.type}
+                isGroup={isGroup}
+                seen={seenMessage}
+              />
+            </>
           );
         }
       )}
